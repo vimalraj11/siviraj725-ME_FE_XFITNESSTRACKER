@@ -1,5 +1,3 @@
-import { formatDate } from "../utils/storage";
-
 export default function RecentStatistics({ records, onEdit, onDelete }) {
   const sorted = [...records].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
@@ -13,7 +11,7 @@ export default function RecentStatistics({ records, onEdit, onDelete }) {
           {sorted.map((r) => (
             <li key={r.id} className="stat-item">
               <div className="stat-main">
-                <span className="stat-date">{formatDate(r.date)}</span>
+                <span className="stat-date">{r.date}</span>
                 <span className="stat-desc">{r.description}</span>
               </div>
               <div className="stat-values">

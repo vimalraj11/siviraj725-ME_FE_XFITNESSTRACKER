@@ -22,15 +22,6 @@ export function toISODate(date) {
   return `${year}-${month}-${day}`;
 }
 
-export function formatDate(isoDate) {
-  const [year, month, day] = isoDate.split("-").map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
 // Builds one entry per calendar day for today and the 6 days before it,
 // then adds up the calories of every record that falls on each day.
 export function getLastSevenDays(records) {
