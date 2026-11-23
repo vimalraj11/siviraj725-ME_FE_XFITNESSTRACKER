@@ -57,3 +57,8 @@ export function getLastSevenDays(records) {
 
   return days;
 }
+
+export function hasRecordsInLastSevenDays(records) {
+  const lastSevenDates = getLastSevenDays([]).map((day) => day.date);
+  return records.some((record) => lastSevenDates.includes(record.date));
+}

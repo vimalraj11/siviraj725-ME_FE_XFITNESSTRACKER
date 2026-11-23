@@ -7,7 +7,7 @@ export default function RecentStatistics({ records, onEdit, onDelete }) {
     <section className="card recent">
       <h2>Recent Health Statistics</h2>
       {sorted.length === 0 ? (
-        <p className="empty">No data yet. Click + Add data to log your first day.</p>
+        <p className="empty">No data yet. Use the form above to log your first day.</p>
       ) : (
         <ul className="stat-list">
           {sorted.map((r) => (
@@ -17,8 +17,8 @@ export default function RecentStatistics({ records, onEdit, onDelete }) {
                 <span className="stat-desc">{r.description}</span>
               </div>
               <div className="stat-values">
-                <span className="pill pill-intake">Intake: {r.caloriesIntake} kcal</span>
-                <span className="pill pill-burned">Burned: {r.caloriesBurned} kcal</span>
+                <span className="pill pill-intake">Calories Intake = {r.caloriesIntake}</span>
+                <span className="pill pill-burned">Calories Burned = {r.caloriesBurned}</span>
               </div>
               <div className="stat-actions">
                 <button type="button" className="btn btn-small" onClick={() => onEdit(r)}>

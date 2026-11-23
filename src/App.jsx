@@ -4,7 +4,7 @@ import HealthDataForm from "./components/HealthDataForm";
 import RecentStatistics from "./components/RecentStatistics";
 import WeeklyTrends from "./components/WeeklyTrends";
 import OverallData from "./components/OverallData";
-import { loadRecords, saveRecords, toISODate } from "./utils/storage";
+import { hasRecordsInLastSevenDays, loadRecords, saveRecords, toISODate } from "./utils/storage";
 
 function getEmptyForm() {
   return {
@@ -15,10 +15,13 @@ function getEmptyForm() {
   };
 }
 
+function scrollToForm() {
+  document.getElementById("health-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 export default function App() {
   const [records, setRecords] = useState(() => loadRecords());
   const [formValues, setFormValues] = useState(getEmptyForm);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedRecord, setSelectedRecord] = useState(null);
 
@@ -26,11 +29,15 @@ export default function App() {
     saveRecords(records);
   }, [records]);
 
-  function openAddForm() {
+  function resetForm() {
     setMode("add");
     setSelectedRecord(null);
     setFormValues(getEmptyForm());
-    setIsModalOpen(true);
+  }
+
+  function openAddForm() {
+    resetForm();
+    scrollToForm();
   }
 
   function openEditForm(record) {
@@ -42,12 +49,7 @@ export default function App() {
       caloriesBurned: String(record.caloriesBurned),
       description: record.description,
     });
-    setIsModalOpen(true);
-  }
-
-  function closeForm() {
-    setIsModalOpen(false);
-    setSelectedRecord(null);
+    scrollToForm();
   }
 
   function handleSubmit() {
@@ -68,11 +70,14 @@ export default function App() {
       setRecords([...records, { id: Date.now(), ...recordData }]);
     }
 
-    closeForm();
+    resetForm();
   }
 
   function handleDelete(id) {
     setRecords(records.filter((record) => record.id !== id));
+    if (selectedRecord && selectedRecord.id === id) {
+      resetForm();
+    }
   }
 
   return (
@@ -80,22 +85,21 @@ export default function App() {
       <Header onAdd={openAddForm} />
 
       <main className="layout">
-        <RecentStatistics records={records} onEdit={openEditForm} onDelete={handleDelete} />
+        <div className="side">
+          <HealthDataForm
+            mode={mode}
+            formValues={formValues}
+            setFormValues={setFormValues}
+            onSubmit={handleSubmit}
+            onCancel={resetForm}
+          />
+          <RecentStatistics records={records} onEdit={openEditForm} onDelete={handleDelete} />
+        </div>
         <div className="charts">
           <OverallData records={records} />
-          {records.length > 0 && <WeeklyTrends records={records} />}
+          {hasRecordsInLastSevenDays(records) && <WeeklyTrends records={records} />}
         </div>
       </main>
-
-      {isModalOpen && (
-        <HealthDataForm
-          mode={mode}
-          formValues={formValues}
-          setFormValues={setFormValues}
-          onSubmit={handleSubmit}
-          onCancel={closeForm}
-        />
-      )}
     </div>
   );
 }
